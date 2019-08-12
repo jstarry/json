@@ -1,18 +1,18 @@
-#[cfg(not(feature = "std"))]
-use core::iter::FromIterator;
-#[cfg(feature = "std")]
-use std::borrow::Cow;
-#[cfg(feature = "std")]
-use std::iter::FromIterator;
+cfg_if::cfg_if! {
+    if #[cfg(feature = "std")] {
+        use std::borrow::Cow;
+        use std::iter::FromIterator;
+    } else {
+        use core::iter::FromIterator;
+        use alloc::borrow::Cow;
+        use alloc::string::{String, ToString};
+        use alloc::vec::Vec;
+    }
+}
 
 use super::Value;
 use map::Map;
 use number::Number;
-
-#[cfg(not(feature = "std"))]
-use alloc::borrow::Cow;
-#[cfg(not(feature = "std"))]
-use alloc::prelude::{String, ToString, Vec};
 
 macro_rules! from_integer {
     ($($ty:ident)*) => {

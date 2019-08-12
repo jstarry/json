@@ -1,17 +1,17 @@
-#[cfg(not(feature = "std"))]
-use core::fmt;
-#[cfg(not(feature = "std"))]
-use core::ops;
-#[cfg(feature = "std")]
-use std::fmt;
-#[cfg(feature = "std")]
-use std::ops;
+cfg_if::cfg_if! {
+    if #[cfg(feature = "std")] {
+        use std::fmt;
+        use std::ops;
+    } else {
+        use alloc::borrow::ToOwned;
+        use alloc::string::String;
+        use core::fmt;
+        use core::ops;
+    }
+}
 
 use super::Value;
 use map::Map;
-
-#[cfg(not(feature = "std"))]
-use alloc::prelude::{String, ToOwned};
 
 /// A type that can be used to index into a `serde_json::Value`.
 ///
@@ -142,7 +142,7 @@ where
 // Prevent users from implementing the Index trait.
 mod private {
     #[cfg(not(feature = "std"))]
-    use alloc::prelude::String;
+    use alloc::string::String;
 
     pub trait Sealed {}
     impl Sealed for usize {}

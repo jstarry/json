@@ -6,8 +6,13 @@ use map::Map;
 use number::Number;
 use value::{to_value, Value};
 
-#[cfg(not(feature = "std"))]
-use alloc::prelude::{String, ToOwned, ToString, Vec};
+cfg_if::cfg_if! {
+    if #[cfg(not(feature = "std"))] {
+        use alloc::string::{String, ToString};
+        use alloc::borrow::ToOwned;
+        use alloc::vec::Vec;
+    }
+}
 
 impl Serialize for Value {
     #[inline]

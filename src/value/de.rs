@@ -1,23 +1,20 @@
-#[cfg(not(feature = "std"))]
-use alloc::borrow::Cow;
-#[cfg(not(feature = "std"))]
-use alloc::vec;
-#[cfg(not(feature = "std"))]
-use core::fmt;
-#[cfg(not(feature = "std"))]
-use core::slice;
-#[cfg(not(feature = "std"))]
-use core::str;
-#[cfg(feature = "std")]
-use std::borrow::Cow;
-#[cfg(feature = "std")]
-use std::fmt;
-#[cfg(feature = "std")]
-use std::slice;
-#[cfg(feature = "std")]
-use std::str;
-#[cfg(feature = "std")]
-use std::vec;
+cfg_if::cfg_if! {
+    if #[cfg(feature = "std")] {
+        use std::borrow::Cow;
+        use std::fmt;
+        use std::slice;
+        use std::str;
+        use std::vec;
+    } else {
+        use alloc::borrow::{Cow, ToOwned};
+        use alloc::string::String;
+        use alloc::vec::Vec;
+        use alloc::vec;
+        use core::fmt;
+        use core::slice;
+        use core::str;
+    }
+}
 
 use serde;
 use serde::de::{
@@ -34,9 +31,6 @@ use serde::de;
 
 #[cfg(feature = "arbitrary_precision")]
 use number::NumberFromString;
-
-#[cfg(not(feature = "std"))]
-use alloc::prelude::{String, ToOwned, Vec};
 
 impl<'de> Deserialize<'de> for Value {
     #[inline]

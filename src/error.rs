@@ -1,26 +1,20 @@
 //! When serializing or deserializing JSON goes wrong.
 
-#[cfg(not(feature = "std"))]
-use alloc::str::FromStr;
-#[cfg(not(feature = "std"))]
-use core::fmt::{self, Debug, Display};
-#[cfg(not(feature = "std"))]
-use core::result;
-#[cfg(feature = "std")]
-use std::error;
-#[cfg(feature = "std")]
-use std::fmt::{self, Debug, Display};
-#[cfg(feature = "std")]
-use std::io;
-#[cfg(feature = "std")]
-use std::result;
-#[cfg(feature = "std")]
-use std::str::FromStr;
-
-#[cfg(not(feature = "std"))]
-use alloc::prelude::*;
-#[cfg(not(feature = "std"))]
-use alloc::string::String;
+cfg_if::cfg_if! {
+    if #[cfg(feature = "std")] {
+        use std::error;
+        use std::fmt::{self, Debug, Display};
+        use std::io;
+        use std::result;
+        use std::str::FromStr;
+    } else {
+        use alloc::boxed::Box;
+        use alloc::str::FromStr;
+        use alloc::string::{String, ToString};
+        use core::fmt::{self, Debug, Display};
+        use core::result;
+    }
+}
 
 use serde::de;
 use serde::ser;

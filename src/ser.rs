@@ -1,37 +1,29 @@
 //! Serialize a Rust data structure into JSON data.
 
-#[cfg(not(feature = "std"))]
-use alloc::prelude::{String, ToString, Vec};
-#[cfg(not(feature = "std"))]
-use core::fmt;
-#[cfg(not(feature = "std"))]
-use core::num::FpCategory;
-#[cfg(not(feature = "std"))]
-use core::str;
-#[cfg(feature = "std")]
-use std::fmt;
-#[cfg(feature = "std")]
-use std::io;
-#[cfg(feature = "std")]
-use std::num::FpCategory;
-#[cfg(feature = "std")]
-use std::str;
+cfg_if::cfg_if! {
+    if #[cfg(feature = "std")] {
+        use std::fmt;
+        use std::io;
+        use std::num::FpCategory;
+        use std::str;
+        use std::io::Write as WriteTrait;
+        type IoResult = io::Result<()>;
+    } else {
+        use core::fmt;
+        use core::num::FpCategory;
+        use core::str;
+        use alloc::string::{String, ToString};
+        use alloc::vec::Vec;
+        use core::fmt::Write as WriteTrait;
+        type IoResult = fmt::Result;
+    }
+}
 
 use super::error::{Error, ErrorCode, Result};
 use serde::ser::{self, Impossible, Serialize};
 
 use itoa;
 use ryu;
-
-#[cfg(not(feature = "std"))]
-use core::fmt::Write as WriteTrait;
-#[cfg(feature = "std")]
-use std::io::Write as WriteTrait;
-
-#[cfg(feature = "std")]
-type IoResult = io::Result<()>;
-#[cfg(not(feature = "std"))]
-type IoResult = fmt::Result;
 
 /// A structure for serializing Rust values into JSON.
 pub struct Serializer<W, F = CompactFormatter> {

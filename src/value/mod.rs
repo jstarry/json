@@ -92,20 +92,20 @@
 //! [from_slice]: https://docs.serde.rs/serde_json/de/fn.from_slice.html
 //! [from_reader]: https://docs.serde.rs/serde_json/de/fn.from_reader.html
 
-#[cfg(not(feature = "std"))]
-use core::fmt::{self, Debug};
-#[cfg(not(feature = "std"))]
-use core::mem;
-#[cfg(not(feature = "std"))]
-use core::str;
-#[cfg(feature = "std")]
-use std::fmt::{self, Debug};
-#[cfg(feature = "std")]
-use std::io;
-#[cfg(feature = "std")]
-use std::mem;
-#[cfg(feature = "std")]
-use std::str;
+cfg_if::cfg_if! {
+    if #[cfg(feature = "std")] {
+        use std::fmt::{self, Debug};
+        use std::io;
+        use std::mem;
+        use std::str;
+    } else {
+        use core::fmt::{self, Debug};
+        use core::mem;
+        use core::str;
+        use alloc::string::String;
+        use alloc::vec::Vec;
+    }
+}
 
 use serde::de::DeserializeOwned;
 use serde::ser::Serialize;
@@ -120,9 +120,6 @@ pub use raw::RawValue;
 pub use self::index::Index;
 
 use self::ser::Serializer;
-
-#[cfg(not(feature = "std"))]
-use alloc::prelude::{String, Vec};
 
 /// Represents any valid JSON value.
 ///
